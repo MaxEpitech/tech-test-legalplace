@@ -11,9 +11,6 @@ export class Pharmacy {
     this.drugs = drugs;
   }
 
-
-
-
   updateBenefitValue() {
     for (const drug of this.drugs) {
       this.updateDrug(drug);
@@ -31,6 +28,9 @@ export class Pharmacy {
         break;
       case "Magic Pill":
         this.updateMagicPill(drug);
+        break;
+      case "Dafalgan":
+        this.updateDafalgan(drug);
         break;
       default:
         this.updateDefault(drug);
@@ -58,6 +58,12 @@ export class Pharmacy {
 
   updateMagicPill(drug) {
     // Magic Pill does not change
+  }
+
+  updateDafalgan(drug) {
+    drug.expiresIn -= 1;
+    const decrement = drug.expiresIn < 0 ? 4 : 2;
+    drug.benefit = Math.max(0, drug.benefit - decrement);
   }
 
   updateDefault(drug) {
