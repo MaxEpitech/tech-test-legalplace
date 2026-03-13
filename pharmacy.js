@@ -12,57 +12,57 @@ export class Pharmacy {
   }
 
 
+
+
   updateBenefitValue() {
-    for (var i = 0; i < this.drugs.length; i++) {
-      if (
-        this.drugs[i].name != "Herbal Tea" &&
-        this.drugs[i].name != "Fervex"
-      ) {
-        if (this.drugs[i].benefit > 0) {
-          if (this.drugs[i].name != "Magic Pill") {
-            this.drugs[i].benefit = this.drugs[i].benefit - 1;
-          }
-        }
-      } else {
-        if (this.drugs[i].benefit < 50) {
-          this.drugs[i].benefit = this.drugs[i].benefit + 1;
-          if (this.drugs[i].name == "Fervex") {
-            if (this.drugs[i].expiresIn < 11) {
-              if (this.drugs[i].benefit < 50) {
-                this.drugs[i].benefit = this.drugs[i].benefit + 1;
-              }
-            }
-            if (this.drugs[i].expiresIn < 6) {
-              if (this.drugs[i].benefit < 50) {
-                this.drugs[i].benefit = this.drugs[i].benefit + 1;
-              }
-            }
-          }
-        }
-      }
-      if (this.drugs[i].name != "Magic Pill") {
-        this.drugs[i].expiresIn = this.drugs[i].expiresIn - 1;
-      }
-      if (this.drugs[i].expiresIn < 0) {
-        if (this.drugs[i].name != "Herbal Tea") {
-          if (this.drugs[i].name != "Fervex") {
-            if (this.drugs[i].benefit > 0) {
-              if (this.drugs[i].name != "Magic Pill") {
-                this.drugs[i].benefit = this.drugs[i].benefit - 1;
-              }
-            }
-          } else {
-            this.drugs[i].benefit =
-              this.drugs[i].benefit - this.drugs[i].benefit;
-          }
-        } else {
-          if (this.drugs[i].benefit < 50) {
-            this.drugs[i].benefit = this.drugs[i].benefit + 1;
-          }
-        }
-      }
+    for (const drug of this.drugs) {
+      this.updateDrug(drug);
+    }
+    return this.drugs;
+  }
+
+  updateDrug(drug) {
+    switch (drug.name) {
+      case "Herbal Tea":
+        this.updateHerbalTea(drug);
+        break;
+      case "Fervex":
+        this.updateFervex(drug);
+        break;
+      case "Magic Pill":
+        this.updateMagicPill(drug);
+        break;
+      default:
+        this.updateDefault(drug);
+        break;
+    }
+  }
+
+  updateHerbalTea(drug) {
+    drug.expiresIn -= 1;
+    const increment = drug.expiresIn < 0 ? 2 : 1;
+    drug.benefit = Math.min(50, drug.benefit + increment);
+  }
+
+  updateFervex(drug) {
+    drug.expiresIn -= 1;
+    // if expired, set benefit to 0
+    if (drug.expiresIn < 0) {
+      drug.benefit = 0;
+      return;
     }
 
-    return this.drugs;
+    const increment = drug.expiresIn < 6 ? 3 : drug.expiresIn < 11 ? 2 : 1;
+    drug.benefit = Math.min(50, drug.benefit + increment);
+  }
+
+  updateMagicPill(drug) {
+    // Magic Pill does not change
+  }
+
+  updateDefault(drug) {
+    drug.expiresIn -= 1;
+    const decrement = drug.expiresIn < 0 ? 2 : 1;
+    drug.benefit = Math.max(0, drug.benefit - decrement);
   }
 }
